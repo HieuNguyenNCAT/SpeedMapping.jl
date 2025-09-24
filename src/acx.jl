@@ -66,7 +66,7 @@ end
 end
 
 function acx(
-        c :: Union{AcxCache, Nothing}, f :: FN, g! :: FN, m! :: FN, g :: FN, m :: FN, x_in :: T, 
+        c :: Union{AcxCache, Nothing}, f, g!, m!, g, m, x_in :: T, 
         orders, params_F, params_I, bounds, max_time, store_trace, initialize_learning_rate
     ) where {T}
 

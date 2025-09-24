@@ -70,8 +70,6 @@ function assess_status(iter_budget, maps_budget, max_time, converged)
     return :failure
 end
 
-FN = Union{Function, Nothing}
-
 """
 SpeedMapping solves three types of problems:
 1. Accelerating convergent mapping iterations
@@ -89,17 +87,17 @@ using two algorithms:
 - For **AA**: `x0` should be a mutable AbstractArray{AbstractFloat}.
 
 #### Keyword arguments defining the problem
-One and _only one_ of the following argument should be supplied. All of them are of type `FN = Union{Function, Nothing}`.
+One and _only one_ of the following argument should be supplied. All of them are `nothing` by default.
 
-`m! :: FN = nothing` in-place mapping function for problem **1** with mutable arrays as input. 
+`m! = nothing` in-place mapping function for problem **1** with mutable arrays as input. 
 ```Julia
 speedmapping([1.,1.]; m! = (xout, xin) -> xout .= 0.9xin)
 ```
-`r! :: FN = nothing` in-place residual function for problem **2** with mutable arrays as input. 
+`r! = nothing` in-place residual function for problem **2** with mutable arrays as input. 
 ```Julia
 speedmapping([1.,1.]; r! = (resid, x) -> resid .= -0.1x)
 ```
-`g! :: FN = nothing` in-place gradient function for problem **3** with mutable arrays as input. 
+`g! = nothing` in-place gradient function for problem **3** with mutable arrays as input. 
 ```Julia
 speedmapping([1.,1.]; g! = (grad, x) -> grad .= 4x.^3)
 ```
@@ -111,7 +109,7 @@ speedmapping(SA[1.,1.]; m = x -> 0.9x)
 speedmapping(1.; g = x -> 4x^3)
 speedmapping((2.,2.); g = x -> (x[1] - 2, x[2].^3))
 ```
-`f :: FN = nothing` computes an objective function. 
+`f = nothing` computes an objective function. 
 - For **3**, `f` will be used to initialize the learning rate better.
 - For **1** using **AA**, `f` will be used ensure monotonicity of the algorithm. 
 
@@ -121,25 +119,25 @@ speedmapping([1.,1.]; g! = (grad, x) -> grad .= 4x.^3, lower = [-Inf, 2.])
 ```
 ### Other keyword arguments
 
-`algo :: Symbol = r! !== nothing ? :aa : :acx` determines the algorithm used, either `:acx` or `:aa` (default: `:acx`, unless `r!` is used).
+`algo :: Symbol = r! ≠ nothing ? :aa : :acx` determines the algorithm used, either `:acx` or `:aa` (default: `:acx`, unless `r!` is used).
 
 - Affecting both **ACX** and **AA**: `cache`, `abstol`, `pnorm`, `maps_limit`, `iter_limit`, `time_limit`, `reltol_resid_grow`, `buffer`, `store_trace`
 - Affecting **ACX**: `orders`, `initial_learning_rate`
 - Affecting **AA**: `lags`, `condition_max`, `ada_relax`, `relax_default`, `composite`, `abstol_obj_grow`
 """
 function speedmapping(
-        x0 :: T; f :: FN = nothing, g! :: FN = nothing, g :: FN = nothing, m! :: FN = nothing, 
-        m :: FN = nothing, r! :: FN = nothing, algo::Symbol = r! !== nothing ? :aa : :acx, # Note: we don't use r because immutable containers are not implemented for aa 
+        x0 :: T; g! = nothing, g = nothing, m! = nothing, m = nothing, r! = nothing, # Note: we don't use r because immutable containers are not implemented for aa 
+        f = nothing, algo::Symbol = r! ≠ nothing ? :aa : :acx, 
         cache :: Union{AcxCache, AaCache, Nothing} = nothing, 
         orders :: Tuple = (2,3,3), initial_learning_rate :: Real = 1., initialize_learning_rate :: Bool = true,
         lags :: Integer = 30, condition_max :: Real = 1e6, relax_default :: Real = 1., 
-        ada_relax :: Symbol = m! !== nothing ? :minimum_distance : :none, composite :: Symbol = :none, 
+        ada_relax :: Symbol = m! ≠ nothing ? :minimum_distance : :none, composite :: Symbol = :none, 
         abstol :: AbstractFloat = 1e-8, pnorm :: Real = 2., 
         maps_limit :: Real = 1_000_000_000, iter_limit = 1_000_000_000, time_limit :: Real = Inf, 
-        reltol_resid_grow :: Real = algo == :aa ? 4. : (g! !== nothing || g !== nothing) ? 1e5 : 100., 
+        reltol_resid_grow :: Real = algo == :aa ? 4. : (g! ≠ nothing || g ≠ nothing) ? 1e5 : 100., 
         abstol_obj_grow :: Real = √abstol, 
         lower = nothing, upper = nothing, 
-        buffer :: AbstractFloat = (m! !== nothing || m !== nothing) ? 0.05 : 0.,
+        buffer :: AbstractFloat = (m! ≠ nothing || m ≠ nothing) ? 0.05 : 0.,
         store_trace :: Bool = false
     ) where {T} # T can typically be a mutable abstract array, or with :acx it could be a scalar, static array, a tuple...
 
@@ -163,14 +161,14 @@ function speedmapping(
     params_I = (iter_limit = iter_limit, maps_limit = maps_limit)
 
     for bound in (lower, upper)
-        if bound !== nothing 
+        if bound ≠ nothing 
             eachindex(bound) == eachindex(x0) || throw(ArgumentError("bounds and x0 should have the same indices"))
             eltype(x0) <: Real || throw(ArgumentError("Bounds only available for Real types"))
             eltype(bound) <: Real || throw(ArgumentError("Bounds should be Real"))
         end
     end
 
-    if lower !== nothing && upper !== nothing
+    if lower ≠ nothing && upper ≠ nothing
         for i in eachindex(lower)
             lower[i] <= upper[i] || throw(ArgumentError("bound constraint #$i is infeasible because $(lower[i]) > $(upper[i])."))
         end
@@ -181,7 +179,7 @@ function speedmapping(
         # Fix this (inputs, etc)
         m! ≠ nothing || r! ≠ nothing || throw(ArgumentError("m! or r! must be provided with algo :aa")) 
         (g! ≠ nothing || g ≠ nothing) && throw(ArgumentError("for minimization, use algo :acx"))
-        #r! ≠ nothing && (lower !== nothing || upper !== nothing) && throw(ArgumentError("bounds not available with r!"))
+        #r! ≠ nothing && (lower ≠ nothing || upper ≠ nothing) && throw(ArgumentError("bounds not available with r!"))
 
         if in_place && cache === nothing 
             cache = AaCache(x0; lags)
