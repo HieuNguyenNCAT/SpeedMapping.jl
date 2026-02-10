@@ -11,6 +11,10 @@ MuladdMacro = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
+[weakdeps]
+LinearSolve = "7ed4a6bd-7ac6-59ff-8d9a-6a81aa061f32"
+NonlinearSolve = "8913a72c-46f1-40a4-a5b1-6a0a8b0e9f0f"
+
 [compat]
 ForwardDiff = "1"
 LinearAlgebra = "1"
@@ -19,16 +23,12 @@ MuladdMacro = "0.2.4"
 StaticArrays = "1.9"
 julia = "1.10"
 
-# Add these to allow compatibility with recent NonlinearSolve / LinearSolve
-LinearSolve = "2"
-NonlinearSolve = "3"
-Krylov = "0.9"
+# Added to help resolution without forcing hard deps
+LinearSolve = "1.30, 2"          # Allows 1.30+ up to <3 (compatible with Krylov 0.9 upper bound)
+NonlinearSolve = "3.0, <3.48"    # Stays in 3.x but below versions demanding LinearSolve ≥3.48
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
-
-
-
