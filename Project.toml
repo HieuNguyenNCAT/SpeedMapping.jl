@@ -19,8 +19,16 @@ MuladdMacro = "0.2.4"
 StaticArrays = "1.9"
 julia = "1.10"
 
+# Add these to allow compatibility with recent NonlinearSolve / LinearSolve
+LinearSolve = "2"
+NonlinearSolve = "3"
+Krylov = "0.9"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
+
+
+
