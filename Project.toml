@@ -10,8 +10,6 @@ MaybeInplace = "bb5d69b7-63fc-4a16-80bd-7e42200c7bdb"
 MuladdMacro = "46d2c3a1-f734-5fdb-9937-b9b9aeba4221"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
-
-[weakdeps]
 LinearSolve = "7ed4a6bd-7ac6-59ff-8d9a-6a81aa061f32"
 NonlinearSolve = "8913a72c-46f1-40a4-a5b1-6a0a8b0e9f0f"
 
