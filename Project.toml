@@ -5,7 +5,6 @@ version = "0.4.1"
 
 [deps]
 ForwardDiff = "f6369f11-2688-5a93-a128-0538d151201e"
-NonlinearSolve = "8913a72c-1f9b-4ce2-8d8a-65691ebecd77"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
@@ -14,9 +13,7 @@ julia = "1.6"
 ForwardDiff = "0.10"
 Reexport = "1.0"
 StaticArrays = "1.0"
-# This is the critical line. 
-# We allow version 3.x of NonlinearSolve to hope it supports the older LinearSolve required by GeNIOS.
-NonlinearSolve = "0.1, 3.0, 4.0" 
+
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
