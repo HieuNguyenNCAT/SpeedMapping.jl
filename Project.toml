@@ -20,10 +20,8 @@ MaybeInplace = "0.1.4"
 MuladdMacro = "0.2.4"
 StaticArrays = "1.9"
 julia = "1.10"
-
-# Added to help resolution without forcing hard deps
-LinearSolve = "1.30, 2"          # Allows 1.30+ up to <3 (compatible with Krylov 0.9 upper bound)
-NonlinearSolve = "3.0, <3.48"    # Stays in 3.x but below versions demanding LinearSolve ≥3.48
+LinearSolve = "1"                  # Allows 1.x versions (compatible with Krylov 0.9)
+NonlinearSolve = "3"               # Allows 3.x (resolver picks one with LinearSolve ≤~3.7)
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
